@@ -1,19 +1,15 @@
     /// <reference path="../Accelerometer.ts"/>
     /// <reference path="../Utilitary.ts"/>
 
-
-
 /*				FAUSTINTERFACE.JS
 
 	HELPER FUNCTIONS TO CREATE FAUST INTERFACES
-	
+
 	FIRST PART --> DECODE JSON ENCODED INTERFACE
 	SECOND PART --> ADD GRAPHICAL OBJECTS TO INTERFACE
 */
 
-"use strict";
-
-/******************************************************************** 
+/********************************************************************
 *************************** DECODE JSON *****************************
 ********************************************************************/
 interface Iitems extends HTMLDivElement {
@@ -79,10 +75,9 @@ class FaustInterfaceControler {
     updateFaustCodeCallback: (details: ElementCodeFaustParser)=>void
     setDSPValueCallback: (address: string, value: string) => void;
 
-
     constructor(interfaceCallback: (faustInterfaceControler: FaustInterfaceControler) => void, setDSPValueCallback: (address: string, value: string) => void) {
         this.interfaceCallback = interfaceCallback;
-        this.setDSPValueCallback=setDSPValueCallback;
+        this.setDSPValueCallback = setDSPValueCallback;
     }
     //parse interface json from faust webaudio-asm-wrapper to create corresponding FaustInterfaceControler
     parseFaustJsonUI(ui: Iitems[], module: ModuleClass): FaustInterfaceControler[] {
@@ -107,12 +102,10 @@ class FaustInterfaceControler {
         }
 
         if (item.type === "vgroup" || item.type === "hgroup" || item.type === "tgroup") {
-
             this.parse_items(item.items, module);
-
         } else if (item.type === "vslider" || item.type === "hslider") {
             var itemElement = <Iitem>item;
-            
+
             var controler: FaustInterfaceControler = new FaustInterfaceControler(
                 () => { this.interfaceCallback(controler) },
                 (adress, value) => { this.setDSPValueCallback(adress,value) }
@@ -121,7 +114,6 @@ class FaustInterfaceControler {
             controler.itemParam = itemElement;
             controler.value = itemElement.init;
             this.faustControlers.push(controler)
-
 
         } else if (item.type === "button") {
             var itemElement = <Iitem>item;
@@ -142,7 +134,6 @@ class FaustInterfaceControler {
             controler.itemParam = itemElement;
             controler.value = "0";
             this.faustControlers.push(controler)
-
         }
     }
 
@@ -150,7 +141,6 @@ class FaustInterfaceControler {
         for (var i = 0; i < items.length; i++)
             this.parse_item(items[i], node);
     }
-
 
     setParams() {
         if (this.itemParam.meta != undefined) {
@@ -179,7 +169,7 @@ class FaustInterfaceControler {
         }
     }
 
-    // create and allocate right faustInterfaceView 
+    // create and allocate right faustInterfaceView
     createFaustInterfaceElement(): HTMLElement {
         if (this.faustInterfaceView && this.faustInterfaceView.type) {
             if (this.faustInterfaceView.type === "vslider" || this.faustInterfaceView.type === "hslider") {
@@ -189,7 +179,6 @@ class FaustInterfaceControler {
             } else if (this.faustInterfaceView.type === "checkbox") {
                 return this.faustInterfaceView.addFaustCheckBox(this.itemParam.init);
             }
-            
         }
     }
 
@@ -259,7 +248,7 @@ class FaustInterfaceControler {
                     this.accelerometerSlider.callbackValueChange = (address, value) => { this.callbackValueChange(address, value) }
                     this.accelerometerSlider.isEnabled = false;
                     this.faustInterfaceView.slider.parentElement.classList.add("disabledAcc")
-                } 
+                }
             }
             if (this.accelerometerSlider == undefined) {
                 this.acc = this.accDefault;
@@ -285,7 +274,7 @@ class FaustInterfaceControler {
         }
     }
 
-    //callback to update the dsp value 
+    //callback to update the dsp value
     callbackValueChange(address: string, value: number) {
         this.setDSPValueCallback(address, String(value));
         this.faustInterfaceView.slider.value = String((value - parseFloat(this.itemParam.min)) / parseFloat(this.itemParam.step))
@@ -294,9 +283,9 @@ class FaustInterfaceControler {
     }
 }
 
-   /******************************************************************** 
-    ********************* ADD GRAPHICAL ELEMENTS ***********************
-    ********************************************************************/
+/********************************************************************
+********************* ADD GRAPHICAL ELEMENTS ***********************
+********************************************************************/
 class FaustInterfaceView {
     type: string;
     slider: HTMLInputElement;
@@ -329,46 +318,45 @@ class FaustInterfaceView {
         this.output = val;
 
         var myValue: string = Number(itemParam.init).toFixed(precision);
-        
-       
+
         val.appendChild(document.createTextNode("" + myValue + " " + unit));
         val.setAttribute("units", unit);
-	    info.appendChild(val);
+	      info.appendChild(val);
 
-	    group.appendChild(info);
+	      group.appendChild(info);
 
         var high: number = (parseFloat(itemParam.max) - parseFloat(itemParam.min)) / parseFloat(itemParam.step);
 
         var slider: HTMLInputElement = document.createElement("input");
-	    slider.type="range";
-	    slider.min =  "0";
+	      slider.type="range";
+	      slider.min =  "0";
         slider.max = String(high);
         slider.value = String((parseFloat(itemParam.init) - parseFloat(itemParam.min)) / parseFloat(itemParam.step));
         slider.step = "1";
         this.slider = slider;
         group.appendChild(slider);
-        
+
         this.group = group
-	    return group;
+	      return group;
     }
 
     addFaustCheckBox(ivalue: string): HTMLInputElement {
         var group = document.createElement("div");
 
         var checkbox: HTMLInputElement = document.createElement("input");
-	    checkbox.type = "checkbox";
+        checkbox.type = "checkbox";
         checkbox.checked = false;
 
-	    checkbox.id = "mycheckbox";
+        checkbox.id = "mycheckbox";
 
         var label: HTMLLabelElement = document.createElement('label')
-	    label.htmlFor = "mycheckbox";
-	    label.appendChild(document.createTextNode(" " + ivalue));
-	
-	    group.appendChild(checkbox);
-	    group.appendChild(label);
+        label.htmlFor = "mycheckbox";
+        label.appendChild(document.createTextNode(" " + ivalue));
 
-	    return checkbox;
+        group.appendChild(checkbox);
+        group.appendChild(label);
+
+        return checkbox;
     }
 
     addFaustButton(itemParam: Iitem):HTMLElement {
@@ -381,8 +369,7 @@ class FaustInterfaceView {
         this.button.value = itemParam.label;
 
         group.appendChild(button);
-	
-	    return button;
-    }
 
+	      return button;
+    }
 }

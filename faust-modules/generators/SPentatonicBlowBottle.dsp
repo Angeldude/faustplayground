@@ -12,7 +12,7 @@ declare author "ER";//Adapted from Blow Bottle by Romain Michon (rmichon@ccrma.s
 */
 
 import("stdfaust.lib");
-instrument = library("instrument.lib");
+instrument = library("instruments.lib");
 
 
 //==================== INSTRUMENT =======================
@@ -24,9 +24,9 @@ blow(n)=
 	((+(1))*randPressure((trigger(n))) : +(breathPressure(trigger(n)))) - *(instrument.jetTable),_ : baPaF(n),_)~_: !,_: 
 	//signal scaling
 	fi.dcblocker*envelopeG(trigger(n))*(0.5)
-	with{
-			baPaF(n) = bandPassFilter(freq(n));
-			};
+	with {
+        baPaF(n) = bandPassFilter(freq(n));
+    };
 
 //==================== GUI SPECIFICATION ================
 N = 15;
@@ -74,10 +74,10 @@ bandPassFilter(f) = instrument.bandPass(f,bottleRadius);
 //----------------------- Algorithm implementation ----------------------------
 
 //global envelope is of type attack - decay - sustain - release
-envelopeG(t) =  gain*en.adsr(gain*envelopeAttack,envelopeDecay,80,envelopeRelease,t);
+envelopeG(t) =  gain*en.adsr(gain*envelopeAttack,envelopeDecay,0.8,envelopeRelease,t);
 
 //pressure envelope is also ADSR
-envelope(t) = pressure*en.adsr(gain*0.02,0.01,80,gain*0.2,t);
+envelope(t) = pressure*en.adsr(gain*0.02,0.01,0.8,gain*0.2,t);
 
 //vibrato
 vibrato(t) = os.osc(vibratoFreq)*vibratoGain*instrument.envVibrato(vibratoBegin,vibratoAttack,100,vibratoRelease,t)*os.osc(vibratoFreq);
@@ -91,12 +91,12 @@ randPressure(t) = noiseGain*no.noise*breathPressure(t) ;
 //------------------------- Enveloppe Trigger --------------------------------------------
 
 trigger(n) = position(n): trig
-	with{
-	upfront(x) 	= (x-x') > 0;
-	decay(n,x)	= x - (x>0.0)/n;
-	release(n)	= + ~ decay(n);
-	noteDuration = hslider("[3]Note Duration[unit:s][style:knob][acc:2 1 -10 0 10]", 0.166, 0.1, 0.2, 0.01)*44100 : min(8820) : max(4410):int;
-	trig = upfront : release(noteDuration) : >(0.0);
+	with {
+        upfront(x) 	= (x-x') > 0;
+        decay(n,x)	= x - (x>0.0)/n;
+        release(n)	= + ~ decay(n);
+        noteDuration = hslider("[3]Note Duration[unit:s][style:knob][acc:2 1 -10 0 10]", 0.166, 0.1, 0.2, 0.01)*44100 : min(8820) : max(4410):int;
+        trig = upfront : release(noteDuration) : >(0.0);
 	};
 
 

@@ -2,7 +2,7 @@ declare name "Flappy Flute";
 declare author "ER";// Adapted from "Nonlinear WaveGuide Flute" by Romain Michon (rmichon@ccrma.stanford.edu)
 
 import("stdfaust.lib");
-instrument = library("instrument.lib"); 
+instrument = library("instruments.lib"); 
 
 /* =============== DESCRIPTION ======================== :
 
@@ -73,8 +73,6 @@ env2Attack = 0.05;
 env2Release = 0.05;
 env1Release = 0.05;
 
-
-
 //==================== SIGNAL PROCESSING ================
 
 //----------------------- Nonlinear filter ----------------------------
@@ -84,7 +82,7 @@ env1Release = 0.05;
 nlfOrder = 6; 
 
 //attack - sustain - release envelope for nonlinearity (declared in instrument.lib)
-envelopeMod = en.asr(nonLinAttack,100,0.1,gate);
+envelopeMod = en.asr(nonLinAttack,1,0.1,gate);
 
 //nonLinearModultor is declared in instrument.lib, it adapts allpassnn from filter.lib 
 //for using it with waveguide instruments
@@ -112,10 +110,10 @@ reflexionFilter = fi.lowpass(1,2000);
 //----------------------- Algorithm implementation ----------------------------
 
 //Pressure envelope
-env1 = en.adsr(env1Attack,env1Decay,90,env1Release,(gate | pressureEnvelope))*pressure*1.1; 
+env1 = en.adsr(env1Attack,env1Decay,0.9,env1Release,(gate | pressureEnvelope))*pressure*1.1; 
 
 //Global envelope
-env2 = en.asr(env2Attack,100,env2Release,gate)*0.5;
+env2 = en.asr(env2Attack,1,env2Release,gate)*0.5;
 
 //Vibrato Envelope
 vibratoEnvelope = instrument.envVibrato(vibratoBegin,vibratoAttack,100,vibratoRelease,gate)*vibratoGain; 
@@ -127,7 +125,7 @@ breath = no.noise*env1;
 flow = env1 + breath*breathAmp + vibrato;
 
 instrReverbFlute = re.zita_rev1_stereo(rdel,f1,f2,t60dc,t60m,fsmax),_,_ <: _,!,_,!,!,_,!,_ : +,+
-       with{
+    with {
        roomSize = hslider("h:[4]Reverberation/Reverberation Room Size (InstrReverb)[style:knob][acc:1 1 -30 0 16]", 0.72,0.05,2,0.01):min(2):max(0.05);
        rdel = 20;
        f1 = 200;
@@ -135,4 +133,4 @@ instrReverbFlute = re.zita_rev1_stereo(rdel,f1,f2,t60dc,t60m,fsmax),_,_ <: _,!,_
        t60dc = roomSize*3;
        t60m = roomSize*2;
        fsmax = 48000;
-       };
+    };

@@ -13,11 +13,10 @@ declare author "ER"; //From Saxophone by Romain Michon;
 */
 
 import("stdfaust.lib");
-instrument = library("instrument.lib");
+instrument = library("instruments.lib");
 
 //==================== INSTRUMENT =======================
-      
-       
+
 process = vgroup("PULSAXO",
 	(bodyFilter,breathPressure : instrumentBody) ~ 
 	(delay1 : NLFM) : !,_);
@@ -48,7 +47,6 @@ envelopeRelease = 0.1;
 
 //----------------------- Pulsar --------------------------------------
 
-
 pulsaxo = environment{
 
 gate = phasor_bin(1) :-(0.001):pulsar;
@@ -69,7 +67,7 @@ pulsar = _<:(((_)<(ratio_env)):@(100))*((proba)>((_),(no.noise:abs):ba.latch));
 nlfOrder = 6; 
 
 //attack - sustain - release envelope for nonlinearity (declared in instrument.lib)
-envelopeMod = en.asr(nonLinAttack,100,envelopeRelease,gate);
+envelopeMod = en.asr(nonLinAttack,1,envelopeRelease,gate);
 
 //nonLinearModultor is declared in instrument.lib, it adapts allpassnn from filter.lib 
 //for using it with waveguide instruments
@@ -94,7 +92,7 @@ delay1 = de.fdelay(4096,fdel1);
 delay2 = de.fdelay(4096,fdel2);
 
 //Breath pressure is controlled by an attack / sustain / release envelope (en.asr is declared in instrument.lib)
-envelope = (0.55+pressure*0.3)*en.asr(pressure*envelopeAttack,100,pressure*envelopeRelease,gate);
+envelope = (0.55+pressure*0.3)*en.asr(pressure*envelopeAttack,1,pressure*envelopeRelease,gate);
 breath = envelope + envelope*noiseGain*no.noise;
 
 //instrument.envVibrato is decalred in instrument.lib
@@ -103,7 +101,7 @@ breathPressure = breath + breath*vibratoGain*os.osc(vibratoFreq);
 
 //Body filter is a one zero filter (declared in instrument.lib)
 bodyFilter = *(gain) : instrument.oneZero1(b0,b1)
-	with{
+	with {
 		gain = -0.95;
 		b0 = 0.5;
 		b1 = 0.5;	

@@ -9,9 +9,9 @@
     /// <reference path="Load.ts"/>
     /// <reference path="Save.ts"/>
     /// <reference path="AccelerometerEdit.ts"/>
-    /// <reference path="../DriveAPI.ts"/> 
+    /// <reference path="../DriveAPI.ts"/>
     /// <reference path="../Messages.ts"/>
-  
+
 interface Document {
     cancelFullScreen: () => any;
     mozCancelFullScreen: () => any;
@@ -91,7 +91,6 @@ class Menu {
         this.accEdit = new AccelerometerEdit(this.menuView.accEditView);
     }
 
-
     // dispatch the action of the menu buttons to the right submenu handler
     menuHandler(newMenuChoices: MenuChoices): any {
         this.help.stopVideo();
@@ -148,7 +147,6 @@ class Menu {
                 this.currentMenuChoices = MenuChoices.library;
                 break;
         }
-
     }
 
     //manage the load display
@@ -160,8 +158,6 @@ class Menu {
                 this.currentMenuChoices = MenuChoices.load;
                 this.menuView.loadButton.style.backgroundColor = this.menuView.menuColorSelected;
                 this.menuView.loadButton.style.zIndex = "1";
-
-
                 break;
             case MenuChoices.load:
                 this.menuView.contentsMenu.style.display = "none";
@@ -169,8 +165,6 @@ class Menu {
                 this.currentMenuChoices = MenuChoices.null;
                 this.menuView.loadButton.style.backgroundColor = this.menuView.menuColorDefault;
                 this.menuView.loadButton.style.zIndex = "0";
-
-
                 break;
             default:
                 this.cleanMenu();
@@ -191,8 +185,6 @@ class Menu {
                 this.currentMenuChoices = MenuChoices.export;
                 this.menuView.exportButtonMenu.style.backgroundColor = this.menuView.menuColorSelected;
                 this.menuView.exportButtonMenu.style.zIndex = "1";
-
-
                 break;
             case MenuChoices.export:
                 this.menuView.contentsMenu.style.display = "none";
@@ -200,8 +192,6 @@ class Menu {
                 this.currentMenuChoices = MenuChoices.null;
                 this.menuView.exportButtonMenu.style.backgroundColor = this.menuView.menuColorDefault;
                 this.menuView.exportButtonMenu.style.zIndex = "0";
-
-
                 break;
             default:
                 this.cleanMenu();
@@ -222,8 +212,6 @@ class Menu {
                 this.currentMenuChoices = MenuChoices.save;
                 this.menuView.saveButton.style.backgroundColor = this.menuView.menuColorSelected;
                 this.menuView.saveButton.style.zIndex = "1";
-
-
                 break;
             case MenuChoices.save:
                 this.menuView.contentsMenu.style.display = "none";
@@ -231,8 +219,6 @@ class Menu {
                 this.currentMenuChoices = MenuChoices.null;
                 this.menuView.saveButton.style.backgroundColor = this.menuView.menuColorDefault;
                 this.menuView.saveButton.style.zIndex = "0";
-
-
                 break;
             default:
                 this.cleanMenu();
@@ -252,7 +238,6 @@ class Menu {
                 this.menuView.helpContent.style.display = "block";
                 this.menuView.helpButtonMenu.style.backgroundColor = this.menuView.menuColorSelected;
                 this.menuView.helpButtonMenu.style.zIndex = "1";
-
                 this.currentMenuChoices = MenuChoices.help;
                 break;
             case MenuChoices.help:
@@ -261,14 +246,11 @@ class Menu {
                 this.currentMenuChoices = MenuChoices.null;
                 this.menuView.helpButtonMenu.style.backgroundColor = this.menuView.menuColorDefault;
                 this.menuView.helpButtonMenu.style.zIndex = "0";
-
-
                 break;
             default:
                 this.cleanMenu();
                 this.menuView.helpButtonMenu.style.backgroundColor = this.menuView.menuColorSelected;
                 this.menuView.helpButtonMenu.style.zIndex = "1";
-
                 this.menuView.helpContent.style.display = "block";
                 this.currentMenuChoices = MenuChoices.help;
                 break;
@@ -279,23 +261,17 @@ class Menu {
     editMenu() {
         switch (this.currentMenuChoices) {
             case MenuChoices.null:
-
                 this.menuView.editButtonMenu.style.backgroundColor = "#00C50D";
                 this.menuView.editButtonMenu.style.boxShadow = "yellow 0px 0px 51px inset";
-
-
                 this.accEdit.editAction();
                 this.currentMenuChoices = MenuChoices.edit;
                 break;
             case MenuChoices.edit:
                 this.accEdit.editAction();
-
                 this.menuView.editButtonMenu.style.backgroundColor = this.menuView.menuColorDefault;
                 this.menuView.editButtonMenu.style.boxShadow = "none";
-
                 this.menuView.contentsMenu.style.display = "none";
                 this.currentMenuChoices = MenuChoices.null;
-
                 break;
             default:
                 this.cleanMenu();
@@ -303,7 +279,6 @@ class Menu {
                 this.menuView.editButtonMenu.style.boxShadow = "yellow 0px 0px 51px inset";
                 this.accEdit.editAction();
                 this.menuView.contentsMenu.style.display = "none";
-
                 this.currentMenuChoices = MenuChoices.edit;
                 break;
         }
@@ -325,9 +300,6 @@ class Menu {
             this.menuView.editButtonMenu.style.backgroundColor = this.menuView.menuColorDefault;
             this.menuView.editButtonMenu.style.boxShadow = "none";
             this.menuView.contentsMenu.style.display = "block";
-
-
-
         }
         for (var i = 0; i < this.menuView.HTMLElementsMenu.length; i++) {
             this.menuView.HTMLElementsMenu[i].style.display = "none";
@@ -338,7 +310,7 @@ class Menu {
         }
     }
 
-    //update all element that display the scene name 
+    //update all element that display the scene name
     updatePatchNameToInput(e: Event) {
         this.menuView.patchNameScene.textContent = Utilitary.currentScene.sceneName;
         this.menuView.exportView.dynamicName.textContent = Utilitary.currentScene.sceneName;
@@ -352,7 +324,6 @@ class Menu {
 
     //handle fullscreen mode
     fullScreen() {
-        var body = <HTMLBodyElement>document.getElementsByTagName("body")[0];
         if (this.isFullScreen) {
             if (document.cancelFullScreen) {
                 document.cancelFullScreen()
@@ -361,7 +332,6 @@ class Menu {
             } else if (document.mozCancelFullScreen) {
                 document.mozCancelFullScreen();
             }
-
             this.isFullScreen = false;
         } else {
             if (document.documentElement.requestFullscreen) {
@@ -377,7 +347,6 @@ class Menu {
 
     //handle the enabing/disabling of all slider having a accelerometer
     accelerometer() {
-        var checkboxs = document.getElementsByClassName("accCheckbox")
         if (this.isAccelerometer) {
             this.isAccelerometer = false;
             Utilitary.isAccelerometerOn = false;
@@ -391,12 +360,12 @@ class Menu {
                 if (!Utilitary.isAccelerometerEditOn) {
                     slider.disabled = false;
                 }
-                
+
             }
         } else if (!this.isAccelerometer) {
-            this.menuView.accButton.style.opacity = "1";
             this.isAccelerometer = true;
             Utilitary.isAccelerometerOn = true;
+            this.menuView.accButton.style.opacity = "1";
             for (var i = 0; i < AccelerometerHandler.faustInterfaceControler.length; i++) {
                 var acc = AccelerometerHandler.faustInterfaceControler[i].accelerometerSlider;
                 var slider = AccelerometerHandler.faustInterfaceControler[i].faustInterfaceView.slider;
@@ -453,17 +422,22 @@ class Menu {
         this.fillSelectLocal(select);
     }
 
+    //get value of 'item_key'
+    getStorageItem(item_key)  {
+      return (localStorage.getItem(item_key)) ? JSON.parse(localStorage.getItem(item_key)): null;
+    }
+
     //fill select box
     fillSelectLocal(select: HTMLSelectElement) {
-        if (typeof sessionStorage != 'undefined') {
-            for (var i = 0; i < localStorage.length; i++) {
-                var option = document.createElement("option");
-                option.value = localStorage.key(i);
-                option.textContent = localStorage.key(i);
-                select.add(option);
-            }
-
+      var fpg = this.getStorageItem('FaustPlayground');
+      if (fpg) {
+        for (var i = 0; i < fpg.length; i++) {
+            var option = document.createElement("option");
+            option.value = fpg[i][0];
+            option.textContent = fpg[i][0];
+            select.add(option);
         }
+      }
     }
     //dispatch the current scene to the menus objects
     setMenuScene(scene: Scene) {
@@ -510,7 +484,6 @@ class Menu {
         new Message(Utilitary.messageRessource.errorConnectionCloud + " : " + event.detail)
     }
 
-
     fillSelectCloud(optionEvent: CustomEvent) {
         this.load.loadView.cloudSelectFile.add(<HTMLOptionElement>optionEvent.detail);
         var optionSave = <HTMLOptionElement>optionEvent.detail.cloneNode(true);
@@ -521,7 +494,7 @@ class Menu {
         this.clearSelect(this.save.saveView.cloudSelectFile);
         this.drive.updateConnection();
     }
-    
+
     startLoadingDrive() {
         if (!this.isMenuDriveLoading) {
             this.isMenuDriveLoading = true;
@@ -532,6 +505,7 @@ class Menu {
 
         }
     }
+    
     finishLoadingDrive() {
         if (this.isMenuDriveLoading) {
             this.isMenuDriveLoading = false;

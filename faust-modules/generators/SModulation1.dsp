@@ -2,7 +2,7 @@ declare name "Modulation 1";
 declare author "ER";
 
 import("stdfaust.lib");
-instrument = library("instrument.lib");
+instrument = library("instruments.lib");
 
 /* =========== DESCRIPTION ==============
 
@@ -36,7 +36,7 @@ freqMod = hslider("[4]Modulating Frequency[style:knob][unit:Hz][acc:0 0 -10 0 10
 env = ASR;
 ASR = en.asr(a,s,r,t);
 a = 3;
-s = 100;
+s = 1;
 r = 2;
 t = gate;
 

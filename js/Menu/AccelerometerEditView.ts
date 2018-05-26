@@ -1,6 +1,5 @@
 ﻿   /// <reference path="../Utilitary.ts"/>
 
-
 class AccelerometerEditView {
     blockLayer: HTMLDivElement;
     container: HTMLDivElement;
@@ -27,9 +26,7 @@ class AccelerometerEditView {
     rangeVirtual: HTMLInputElement;
     rangeCurrent: HTMLInputElement;
 
-    constructor() {
-
-    }
+    constructor() {}
 
     initAccelerometerEdit(): HTMLElement {
 
@@ -44,7 +41,6 @@ class AccelerometerEditView {
         var labelTitle = document.createElement("label");
         labelTitle.id = "labelTitle";
         this.labelTitle = labelTitle;
-
 
         //radio curves
 
@@ -111,7 +107,6 @@ class AccelerometerEditView {
         radioCurveContainer.appendChild(label3)
         radioCurveContainer.appendChild(label4)
 
-
         // radio Axis
 
         var radioAxisContainer = document.createElement("form")
@@ -170,12 +165,10 @@ class AccelerometerEditView {
         this.radioAxisZ = radioZ;
         labelZ.appendChild(radioZ);
 
-
         radioAxisContainer.appendChild(label0)
         radioAxisContainer.appendChild(labelX)
         radioAxisContainer.appendChild(labelY)
         radioAxisContainer.appendChild(labelZ)
-
 
         // checkbox On/Off accelerometer
 
@@ -198,7 +191,6 @@ class AccelerometerEditView {
         var cloneContainer = document.createElement("div");
         cloneContainer.id = "cloneContainer";
         this.cloneContainer = cloneContainer;
-
 
         //Mapping ranges
         var accRangeMax = document.createElement("input");
@@ -242,7 +234,6 @@ class AccelerometerEditView {
         rangeContainer.appendChild(accRangeCurrent);
         rangeContainer.appendChild(accRangeVirtual);
 
-
         //Validation cancelation buttons
 
         var validContainer = document.createElement("div")
@@ -258,7 +249,6 @@ class AccelerometerEditView {
         cancelButton.className = "accButton";
         this.cancelButton = cancelButton;
 
-
         validContainer.appendChild(cancelButton);
         validContainer.appendChild(validButton);
 
@@ -272,6 +262,5 @@ class AccelerometerEditView {
         blockLayer.appendChild(container);
 
         return blockLayer;
-
     }
 }

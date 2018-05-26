@@ -2,7 +2,7 @@ declare name "Modulation 3";
 declare author "ER";
 
 import("stdfaust.lib");
-instrument = library("instrument.lib");
+instrument = library("instruments.lib");
 
 /* =========== DESCRIPTION ==============
 
@@ -34,7 +34,7 @@ typeMod = 3;
 env = ASR;
 ASR = en.asr(a,s,r,t);
 a = 3;
-s = 100;
+s = 1;
 r = 2;
 t = gate;
 

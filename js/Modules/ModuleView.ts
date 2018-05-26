@@ -1,7 +1,7 @@
 ﻿
 /*				MODULEVIEW.JS
 	HAND-MADE JAVASCRIPT CLASS CONTAINING A FAUST MODULE  INTERFACE
-	
+
 	Interface structure
 	===================
 	DIV --> this.fModuleContainer
@@ -14,14 +14,12 @@
 
 /// <reference path="../Utilitary.ts"/>
 
-
 interface HTMLfEdit extends HTMLDivElement {
     area: HTMLTextAreaElement;
 }
 interface HTMLinterfaceElement extends HTMLElement {
     label: string;
 }
-
 
 class ModuleView {
     inputOutputNodeDimension: number = 32;
@@ -40,9 +38,7 @@ class ModuleView {
     x: number;
     y: number;
 
-
     createModuleView(ID: number, x: number, y: number, name: string, htmlParent: HTMLElement): void {
-
 
         //------- GRAPHICAL ELEMENTS OF MODULE
         var fModuleContainer = document.createElement("div");
@@ -105,13 +101,9 @@ class ModuleView {
 
             fFooter.appendChild(fEditImg);
             fModuleContainer.appendChild(fFooter);
-
-
-
         }
 
         htmlParent.appendChild(fModuleContainer);
-        
 
         this.fName = name;
         this.fModuleContainer = fModuleContainer;
@@ -161,20 +153,17 @@ class ModuleView {
         if (this.fOutputNode) {
             this.fModuleContainer.removeChild(this.fOutputNode);
             this.fOutputNode = null;
-
         }
     }
 
- 
     isPointInOutput(x: number, y: number): boolean {
-
         if (this.fOutputNode && this.fOutputNode.getBoundingClientRect().left < x && x < this.fOutputNode.getBoundingClientRect().right && this.fOutputNode.getBoundingClientRect().top < y && y < this.fOutputNode.getBoundingClientRect().bottom) {
             return true;
         }
         return false;
     }
-    isPointInInput(x: number, y: number): boolean {
 
+    isPointInInput(x: number, y: number): boolean {
         if (this.fInputNode && this.fInputNode.getBoundingClientRect().left <= x && x <= this.fInputNode.getBoundingClientRect().right && this.fInputNode.getBoundingClientRect().top <= y && y <= this.fInputNode.getBoundingClientRect().bottom) {
             return true;
         }
@@ -182,7 +171,6 @@ class ModuleView {
     }
 
     isPointInNode(x: number, y: number): boolean {
-        
         if (this.fModuleContainer && this.fModuleContainer.getBoundingClientRect().left < x && x < this.fModuleContainer.getBoundingClientRect().right && this.fModuleContainer.getBoundingClientRect().top < y && y < this.fModuleContainer.getBoundingClientRect().bottom) {
             return true;
         }

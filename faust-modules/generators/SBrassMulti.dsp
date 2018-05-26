@@ -3,7 +3,7 @@ declare description "WaveGuide Brass instrument from STK";
 declare author "ER"; //Adapted from Brass by Romain Michon (rmichon@ccrma.stanford.edu);
 
 import("stdfaust.lib");
-instrument=library("instrument.lib");
+instrument=library("instruments.lib");
 
 /* ========= DESCRITPION ===========
 
@@ -49,7 +49,6 @@ vibratoBegin = 0.05;
 vibratoAttack = 0.5;
 vibratoRelease = 0.1;
 
-
 envelopeAttack = 0.01;
 envelopeDecay = 0.001;
 envelopeRelease = 2;
@@ -71,7 +70,7 @@ boreDelay(f) = de.fdelay(4096,slideTarget(f));
 vibrato = vibratoGain*os.osc(vibratoFreq)*instrument.envVibrato(vibratoBegin,vibratoAttack,100,vibratoRelease,gate);
 
 //envelope (Attack / Decay / Sustain / Release), breath pressure and vibrato
-breathPressure(p) = p*en.adsr(envelopeAttack,envelopeDecay,100,envelopeRelease,gate) + vibrato;
+breathPressure(p) = p*en.adsr(envelopeAttack,envelopeDecay,1,envelopeRelease,gate) + vibrato;
 mouthPressure(p) = 0.3*breathPressure(p);
 
 //scale the delay feedback

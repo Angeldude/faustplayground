@@ -1,6 +1,5 @@
 ﻿   /// <reference path="../Utilitary.ts"/>
 
-
 class LoadView {
 
     loadFileButton: HTMLButtonElement;
@@ -16,8 +15,6 @@ class LoadView {
     aLightPreExemple: HTMLAnchorElement;
     cloudSelectFile: HTMLSelectElement;
     driveContainer: HTMLElement;
-
-
 
     initLoadView():HTMLElement {
         var loadContainer: HTMLElement = document.createElement("div");
@@ -44,7 +41,6 @@ class LoadView {
         var loadFileDiv = document.createElement("div");
         loadFileDiv.id = "loadFileDiv";
 
-        
         var loadFileInput = document.createElement("input");
         loadFileInput.type = "file";
         loadFileInput.id = "loadFileInput";
@@ -84,7 +80,6 @@ class LoadView {
         aBigPreExemple.draggable = false;
         this.aBigPreExemple = aBigPreExemple;
 
-
         var loadFileButton: HTMLButtonElement = document.createElement("button");
         loadFileButton.type = "button";
         loadFileButton.id = "loadFileButton";
@@ -93,10 +88,10 @@ class LoadView {
         this.loadFileButton = loadFileButton;
 
         loadFileContainer.appendChild(loadFileDiv);
+
         loadFileContainer.appendChild(aLightExemple);
         loadFileContainer.appendChild(aLightPreExemple);
-
-        loadFileContainer.appendChild(aBigExemple);
+	    loadFileContainer.appendChild(aBigExemple);
         loadFileContainer.appendChild(aBigPreExemple);
 
         loadFileBottomButtonContainer.appendChild(loadFileButton)
@@ -177,7 +172,5 @@ class LoadView {
         loadContainer.appendChild(loadCloudContainer);
 
         return loadContainer;
-
-
-    }
+	  }
 }

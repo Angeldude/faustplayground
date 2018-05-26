@@ -2,7 +2,7 @@ declare name "Pulsaxophone";
 declare author "ER"; //From Saxophone by Romain Michon;
 
 import("stdfaust.lib");
-instrument = library("instrument.lib"); 
+instrument = library("instruments.lib"); 
 
 /* =============== DESCRIPTION ================= :
 
@@ -16,7 +16,6 @@ instrument = library("instrument.lib");
 */
 //==================== INSTRUMENT =======================
       
-       
 process = vgroup("Pulsaxo",
 	(bodyFilter,breathPressure : instrumentBody) ~ 
 	(delay1 : NLFM) : !,fi.lowpass(1,1000)
@@ -51,8 +50,7 @@ envelopeRelease = 0.1;
 
 //----------------------- Pulsar --------------------------------------
 
-
-pulsaxo = environment{
+pulsaxo = environment {
 
 gate = phasor_bin(1) :-(0.001):pulsar;
 ratio_env = (0.5);
@@ -72,7 +70,7 @@ pulsar = _<:(((_)<(ratio_env)):@(100))*((proba)>((_),(no.noise:abs):ba.latch));
 nlfOrder = 6; 
 
 //attack - sustain - release envelope for nonlinearity (declared in instrument.lib)
-envelopeMod = en.asr(nonLinAttack,100,envelopeRelease,gate);
+envelopeMod = en.asr(nonLinAttack,1,envelopeRelease,gate);
 
 //nonLinearModultor is declared in instrument.lib, it adapts allpassnn from filter.lib 
 //for using it with waveguide instruments
@@ -97,7 +95,7 @@ delay1 = de.fdelay(4096,fdel1);
 delay2 = de.fdelay(4096,fdel2);
 
 //Breath pressure is controlled by an attack / sustain / release envelope (en.asr is declared in instrument.lib)
-envelope = (0.55+pressure*0.3)*en.asr(pressure*envelopeAttack,100,pressure*envelopeRelease,gate);
+envelope = (0.55+pressure*0.3)*en.asr(pressure*envelopeAttack,1,pressure*envelopeRelease,gate);
 breath = envelope + envelope*noiseGain*no.noise;
 
 //instrument.envVibrato is decalred in instrument.lib
@@ -106,7 +104,7 @@ breathPressure = breath + breath*vibratoGain*os.osc(vibratoFreq);
 
 //Body filter is a one zero filter (declared in instrument.lib)
 bodyFilter = *(gain) : instrument.oneZero1(b0,b1)
-	with{
+	with {
 		gain = -0.95;
 		b0 = 0.5;
 		b1 = 0.5;	
@@ -116,7 +114,7 @@ instrumentBody(delay1FeedBack,breathP) = delay1FeedBack <: -(delay2) <:
 	((breathP - _ <: breathP - _*reedTable) - delay1FeedBack),_;
 
 instrReverbAccel = re.zita_rev1_stereo(rdel,f1,f2,t60dc,t60m,fsmax),_,_ <: _,!,_,!,!,_,!,_ : +,+
-       with{
+    with {
        roomSize = hslider("h:[4]Reverb/Reverberation Room Size (InstrReverb)[style:knob][acc:1 1 -15 0 12]", 0.72,0.1,1.7,0.01):min(1.7):max(0.1);
        rdel = 20;
        f1 = 200;
@@ -124,4 +122,4 @@ instrReverbAccel = re.zita_rev1_stereo(rdel,f1,f2,t60dc,t60m,fsmax),_,_ <: _,!,_
        t60dc = roomSize*3;
        t60m = roomSize*2;
        fsmax = 48000;
-       };
+    };

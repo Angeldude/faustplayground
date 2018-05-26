@@ -1,28 +1,17 @@
 /*				MAIN.JS
 	Entry point of the Program
     intefaces used through the app
-
-
-
-
 */
 
 /// <reference path="App.ts"/>
 /// <reference path="Messages.ts"/>
 
-"use strict";
-
-//listner on load of all element to init the app
-window.addEventListener('load', init, false);
-
-
-
-
-
+// init is call by libfaust-wasm.js load end handler
 
 //initialization af the app, create app and ressource to get text with correct localization
 //then resumeInit on callback when text is loaded
 function init(): void {
+    console.log("FaustPlayground: version 1.0.0");
     var app: App = new App();
     var ressource = new Ressources
     ressource.getRessources(app);
@@ -39,7 +28,7 @@ function resumeInit(app: App) {
         Utilitary.hideFullPageLoading();
     }
     Utilitary.addFullPageLoading();
-    
+
     app.createAllScenes();
     app.createMenu();
 
@@ -50,7 +39,6 @@ function resumeInit(app: App) {
     Utilitary.driveApi = new DriveAPI();
     app.menu.setDriveApi(Utilitary.driveApi);
     Utilitary.driveApi.checkAuth();
-
 
     //error catcher
     window.addEventListener("error", (e: ErrorEvent) => {
@@ -82,6 +70,8 @@ function IosInit(){
     // play the file
     if (source.noteOn) {
         source.noteOn(0);
+    } else if (source.start) {
+    	source.start();
     }
     window.removeEventListener('touchend', IosInit, false)
 }
@@ -97,8 +87,8 @@ function IosInit2() {
     // play the file
     if (source.noteOn) {
         source.noteOn(0);
+    } else if (source.start) {
+    	source.start();
     }
     window.removeEventListener('touchstart', IosInit2, false)
 }
-
-

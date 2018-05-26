@@ -10,7 +10,7 @@ declare reference "https://ccrma.stanford.edu/~jos/pasp/Woodwinds.html";
 //Modification Grame July 2015
 
 import("stdfaust.lib");
-instrument = library("instrument.lib");
+instrument = library("instruments.lib");
 
 /* =============== DESCRIPTION ================= :
 
@@ -65,7 +65,6 @@ envelopeRelease = 0.1;
 
 //==================== SIGNAL PROCESSING ======================
 
-
 //----------------------- Synthesis PARAMETERS computing and functions declaration ----------------------------
 
 //reed table PARAMETERS
@@ -89,7 +88,7 @@ filter = instrument.oneZero0(0.5,0.5);
 //----------------------- Algorithm implementation ----------------------------
 
 //Breath pressure + vibrato + breath no.noise + envelope (Attack / Decay / Sustain / Release)
-envelope = en.adsr(envelopeAttack,envelopeDecay,100,envelopeRelease,gate)*pressure*0.9;
+envelope = en.adsr(envelopeAttack,envelopeDecay,1,envelopeRelease,gate)*pressure*0.9;
 
 vibrato = os.osc(vibratoFreq)*vibratoGain*
 	instrument.envVibrato(0.1*2*vibratoAttack,0.9*2*vibratoAttack,100,vibratoRelease,gate);

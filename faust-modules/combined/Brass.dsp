@@ -10,7 +10,7 @@ declare reference "https://ccrma.stanford.edu/~jos/pasp/Brasses.html";
 //Modification GRAME July 2015
 
 import("stdfaust.lib");
-instrument = library("instrument.lib"); 
+instrument = library("instruments.lib"); 
 
 /* =============== DESCRIPTION ================= :
  
@@ -20,7 +20,6 @@ instrument = library("instrument.lib");
 - Downward = Lower frequency
 
 */
-
 
 //==================== INSTRUMENT =======================
 
@@ -52,7 +51,6 @@ envelopeAttack = 0.005;
 envelopeRelease = 0.07;
 //==================== SIGNAL PROCESSING ================
 
-
 //----------------------- Synthesis parameters computing and functions declaration ----------------------------
 
 //lips are simulated by a biquad filter whose output is squared and hard-clipped, instrument.bandPassH and instrument.saturationPos are declared in instrument.lib
@@ -69,7 +67,7 @@ boreDelay = de.fdelay(4096,slideTarget);
 vibrato = vibratoGain*os.osc(vibratoFreq)*instrument.envVibrato(vibratoBegin,vibratoAttack,100,vibratoRelease,gate);
 
 //envelope (Attack / Decay / Sustain / Release), breath pressure and vibrato
-breathPressure = pressure*en.adsr(envelopeAttack,envelopeDecay,100,envelopeRelease,gate) + vibrato;
+breathPressure = pressure*en.adsr(envelopeAttack,envelopeDecay,1,envelopeRelease,gate) + vibrato;
 mouthPressure = 0.3*breathPressure;
 
 //scale the de.delay feedback
@@ -81,7 +79,7 @@ deltaPressure = mouthPressure - _;
 //-------------------------------- InstrReverb ---------------------------------
 
 InstrReverBrass = re.zita_rev1_stereo(rdel,f1,f2,t60dc,t60m,fsmax),_,_ <: _,!,_,!,!,_,!,_ : +,+
-       with{
+    with {
        roomSize = hslider("v:[4]Reverb/Reverberation Room Size (InstrReverb)[acc:1 1 -15 0 12]", 0.2,0.05,1.7,0.01) : min(1.7) : max(0.05);
        rdel = 20;
        f1 = 200;
@@ -89,5 +87,5 @@ InstrReverBrass = re.zita_rev1_stereo(rdel,f1,f2,t60dc,t60m,fsmax),_,_ <: _,!,_,
        t60dc = roomSize*3;
        t60m = roomSize*2;
        fsmax = 48000;
-       };
+    };
 

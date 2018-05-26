@@ -4,8 +4,6 @@
 /*MODULEFAUST.JS
 HAND - MADE JAVASCRIPT CLASS CONTAINING A FAUST MODULE */
 
-
-
 class ModuleFaust {
     fDSP: IfDSP;
     factory: Factory;
@@ -21,10 +19,7 @@ class ModuleFaust {
         this.fName = name;
     }
 
-
     /*************** ACTIONS ON IN/OUTPUT MODULES ***************************/
-
-
 
     // ------ Returns Connection Array OR null if there are none
     getInputConnections(): Connector[] {
@@ -34,7 +29,6 @@ class ModuleFaust {
         return this.fOutputConnections;
     }
 
-	
     addOutputConnection(connector: Connector): void {
         this.fOutputConnections.push(connector);
     }

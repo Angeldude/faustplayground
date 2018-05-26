@@ -8,8 +8,7 @@ Activate Physical input/ output
 Handle Drag and Drop
 Create Factories and Modules
 
-
-    */
+*/
 /// <reference path="Scenes/SceneClass.ts"/>
 /// <reference path="Modules/ModuleClass.ts"/>
 /// <reference path="Modules/ModuleView.ts"/>
@@ -38,12 +37,7 @@ Create Factories and Modules
 
 //object containg info necessary to compile faust code
 
-
 class App {
-    private static currentScene: number;
-    private static src: IHTMLDivElementSrc;
-    private static out: IHTMLDivElementOut;
-
     menu: Menu;
     scenes: Scene[];
 
@@ -60,12 +54,10 @@ class App {
 
     factory: Factory;
 
-
     createAllScenes(): void {
         var sceneView: SceneView = new SceneView();
         Utilitary.currentScene = new Scene("Normal", this.compileFaust, sceneView);
         this.setGeneralAppListener(this);
-        App.currentScene = 0;
     }
 
     createMenu(): void {
@@ -95,14 +87,12 @@ class App {
         document.getElementsByTagName("body")[0].appendChild(dialogue)
     }
 
-
-
     /********************************************************************
     ****************  CREATE FAUST FACTORIES AND MODULES ****************
     ********************************************************************/
-    
-    compileFaust(compileFaust: CompileFaust) {
 
+    compileFaust(compileFaust: CompileFaust) {
+      
         //  Temporarily Saving parameters of compilation
         this.tempModuleName = compileFaust.name;
         this.tempModuleSourceCode = compileFaust.sourceCode;
@@ -114,19 +104,18 @@ class App {
         if (currentScene) { currentScene.muteScene() };
 
         //locate libraries used in libfaust compiler
-        var args: string[] = ["-I", location.origin + "/faustplayground/faustcode/"];
+        var libpath = location.origin + location.pathname.substring(0, location.pathname.lastIndexOf('/')) + "/faustlibraries/";
+        var args: string[] = ["-I", libpath, "-ftz", "2"];
 
-        //try to create the asm.js code/factory with the faust code given. Then callback to function passing the factory.
+        //try to create the wasm code/factory with the given Faust code. Then callback to function passing the factory.
         try {
             this.factory = faust.createDSPFactory(compileFaust.sourceCode, args, (factory) => { compileFaust.callback(factory) });
         } catch (error) {
             new Message(error)
         }
-        
+
         if (currentScene) { currentScene.unmuteScene() };
-
     }
-
 
     //create Module, set the source faust code to its moduleFaust, set the faust interface , add the input output connection nodes
     //
@@ -134,38 +123,39 @@ class App {
         if (!factory) {
             new Message(Utilitary.messageRessource.errorFactory + faust.getErrorMessage());
             Utilitary.hideFullPageLoading();
-            return null;
+            return;
         }
 
         var module: ModuleClass = new ModuleClass(Utilitary.idX++, this.tempModuleX, this.tempModuleY, this.tempModuleName, document.getElementById("modules"), (module) => { Utilitary.currentScene.removeModule(module) }, this.compileFaust);
         module.moduleFaust.setSource(this.tempModuleSourceCode);
-        module.createDSP(factory);
-        module.setFaustInterfaceControles();
-        module.createFaustInterface();
-        module.addInputOutputNodes();
 
-        //set listener to recompile when dropping faust code on the module
-        if (this.tempModuleName != "input" && this.tempModuleName != "output") {
-            module.moduleView.fModuleContainer.ondrop = (e) => {
-                e.stopPropagation();
-                this.styleOnDragEnd()
-                this.uploadOn(this, module, 0, 0, e)
-            };
-        }
-        module.moduleView.fModuleContainer.ondragover = () => {
-            module.moduleView.fModuleContainer.style.opacity = "1";
-            module.moduleView.fModuleContainer.style.boxShadow = "0 0 40px rgb(255, 0, 0)";
-        }
-        module.moduleView.fModuleContainer.ondragleave = () => {
-            module.moduleView.fModuleContainer.style.opacity = "0.5";
-            module.moduleView.fModuleContainer.style.boxShadow = "0 5px 10px rgba(0, 0, 0, 0.4)";
-        }
-        // the current scene add the module and hide the loading page 
-        Utilitary.currentScene.addModule(module);
-        if (!Utilitary.currentScene.isInitLoading) {
-            Utilitary.hideFullPageLoading()
-        }
+        module.createDSP(factory, () => {
+        	module.setFaustInterfaceControles();
+        	module.createFaustInterface();
+        	module.addInputOutputNodes();
 
+       	 	//set listener to recompile when dropping faust code on the module
+       	 	if (this.tempModuleName != "input" && this.tempModuleName != "output") {
+           		module.moduleView.fModuleContainer.ondrop = (e) => {
+               		e.stopPropagation();
+                	this.styleOnDragEnd()
+                	this.uploadOn(this, module, 0, 0, e)
+            	};
+        	}
+        	module.moduleView.fModuleContainer.ondragover = () => {
+            	module.moduleView.fModuleContainer.style.opacity = "1";
+            	module.moduleView.fModuleContainer.style.boxShadow = "0 0 40px rgb(255, 0, 0)";
+        	}
+        	module.moduleView.fModuleContainer.ondragleave = () => {
+           		module.moduleView.fModuleContainer.style.opacity = "0.5";
+            	module.moduleView.fModuleContainer.style.boxShadow = "0 5px 10px rgba(0, 0, 0, 0.4)";
+        	}
+        	// the current scene add the module and hide the loading page
+        	Utilitary.currentScene.addModule(module);
+        	if (!Utilitary.currentScene.isInitLoading) {
+            	Utilitary.hideFullPageLoading()
+        	}
+        });
     }
 
     /********************************************************************
@@ -173,7 +163,7 @@ class App {
     ********************************************************************/
 
     //-- custom event to load file from the load menu with the file explorer
-    //Init drag and drop reactions, scroll event and body resize event to resize svg element size, 
+    //Init drag and drop reactions, scroll event and body resize event to resize svg element size,
     // add custom double touch event to load dsp from the library menu
     setGeneralAppListener(app: App): void {
 
@@ -181,8 +171,8 @@ class App {
         document.addEventListener("fileload", (e: CustomEvent) => { this.loadFileEvent(e) })
 
         //All drog and drop events
-        window.ondragover = function () { this.className = 'hover'; return false; };
-        window.ondragend = function () { this.className = ''; return false; };
+        window.ondragover = function () { return false; };
+        window.ondragend  = function () { return false; };
         document.ondragstart = () => { this.styleOnDragStart() };
         document.ondragenter = (e) => {
             var srcElement = <HTMLElement>e.srcElement
@@ -211,7 +201,6 @@ class App {
         body.onresize = () => { this.checkRealWindowSize() };
 
         window.ondrop = (e) => {
-            var target = <HTMLElement>e.target;
             this.styleOnDragEnd()
             var x = e.clientX;
             var y = e.clientY;
@@ -222,36 +211,35 @@ class App {
         document.addEventListener("dbltouchlib", (e: CustomEvent) => { this.dblTouchUpload(e) });
     }
 
-
     //-- Upload content dropped on the page and allocate the content to the right function
     uploadOn(app: App, module: ModuleClass, x: number, y: number, e: DragEvent) {
         Utilitary.showFullPageLoading();
         e.preventDefault();
-        
+
         if (e.dataTransfer.files.length > 0) {
 			// we are dropping a file
 			for (var i = 0; i < e.dataTransfer.files.length; i = i + 1) {
 				var f = e.dataTransfer.files[i];
 				console.log("FILES DROP : "+ i + " : " + f.name);
-                this.loadFile(f, module, x+10*i, y+10*i); 
+                this.loadFile(f, module, x+10*i, y+10*i);
 			}
-            
+
 		} else if (e.dataTransfer.getData('URL') && e.dataTransfer.getData('URL').split(':').shift() != "file") {
             // CASE 1 : the dropped object is a url to some faust code
             var url = e.dataTransfer.getData('URL');
             console.log("URL DROP : "+ url);
             this.uploadUrl(app, module, x, y, url);
-            
+
         } else if (e.dataTransfer.getData('URL').split(':').shift() != "file") {
             var dsp_code: string = e.dataTransfer.getData('text');
-            console.log("Text DROP : " + dsp_code);            
+            console.log("Text DROP : " + dsp_code);
             // CASE 2 : the dropped object is some faust code
             if (dsp_code) {
-                 console.log("DROP: CASE 2 ");   
+                 console.log("DROP: CASE 2 ");
                 this.uploadCodeFaust(app, module, x, y, e, dsp_code);
             } else {
                 // CASE 3 : the dropped object is a file containing some faust code or jfaust/json
-                console.log("DROP: CASE 3 ");   
+                console.log("DROP: CASE 3 ");
                 try {
                     this.uploadFileFaust(app, module, x, y, e, dsp_code);
                 } catch (error) {
@@ -259,9 +247,9 @@ class App {
                     Utilitary.hideFullPageLoading();
                 }
             }
-            
+
         } else { // CASE 4 : any other strange thing
-            console.log("DROP: CASE 4 STRANGE ");   
+            console.log("DROP: CASE 4 STRANGE ");
             new Message(Utilitary.messageRessource.errorObjectNotFaustCompatible);
             Utilitary.hideFullPageLoading();
         }
@@ -282,7 +270,6 @@ class App {
         }, Utilitary.errorCallBack)
     }
 
-
     // used for dsp code faust
     uploadCodeFaust(app: App, module: ModuleClass, x: number, y: number, e: DragEvent, dsp_code:string) {
         dsp_code = "process = vgroup(\"" + "TEXT" + "\",environment{" + dsp_code + "}.process);";
@@ -297,26 +284,21 @@ class App {
     uploadFileFaust(app: App, module: ModuleClass, x: number, y: number, e: DragEvent, dsp_code: string) {
         var files: FileList = e.dataTransfer.files;
         var file: File = files[0];
-        this.loadFile(file, module, x, y); 
+        this.loadFile(file, module, x, y);
     }
 
     //Load file dsp or jfaust
     loadFile(file: File, module: ModuleClass, x: number, y: number) {
         var dsp_code: string;
         var reader: FileReader = new FileReader();
-
         var ext: string = file.name.toString().split('.').pop();
-
         var filename: string = file.name.toString().split('.').shift();
-
         var type: string;
 
         if (ext == "dsp") {
             type = "dsp";
             reader.readAsText(file);
-          
-        }
-        else if (ext == "json"||ext=="jfaust") {
+        } else if (ext == "json"||ext=="jfaust") {
             type = "json";
             reader.readAsText(file);
         } else {
@@ -348,9 +330,7 @@ class App {
         Utilitary.showFullPageLoading();
         var position: PositionModule = Utilitary.currentScene.positionDblTapModule();
         this.uploadUrl(this, null, position.x, position.y, e.detail);
-
     }
-
 
     ////////////////////////////// design on drag or drop //////////////////////////////////////
 
@@ -380,7 +360,7 @@ class App {
 
     //manage the window size
     checkRealWindowSize() {
-        
+
         if (window.scrollX > 0) {
             console.log(document.getElementsByTagName("html")[0]);
             document.getElementsByTagName("html")[0].style.width = window.innerWidth + window.scrollX + "px";
@@ -398,13 +378,8 @@ class App {
         } else {
             document.getElementsByTagName("html")[0].style.height = "100%";
             document.getElementById("svgCanvas").style.height = "100%";
-        } 
+        }
     }
 
-
-    errorCallBack(message: string) {
-
-    }
+    errorCallBack(message: string) {}
 }
-
-

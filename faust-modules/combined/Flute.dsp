@@ -22,7 +22,7 @@ declare description "A simple flute based on Smith algorythm: https://ccrma.stan
 */
 
 import("stdfaust.lib");
-instrument = library("instrument.lib"); 
+instrument = library("instruments.lib"); 
 
 //==================== INSTRUMENT =======================
 
@@ -39,8 +39,6 @@ breathAmp = hslider("[3]Breath Noise[style:knob][acc:2 0 -10 0 10]", 0.02, 0.01,
 gate = hslider("[0]ON/OFF (ASR Envelope)",0,0,1,1);
 vibratoFreq = hslider("[4]Vibrato Freq (Vibrato Envelope)[style:knob][unit:Hz][acc:0 1 -10 0 10]", 4,0.5,8,0.1);
 env1Attack = 0.1;//hslider("h:Parameters/Press_Env_Attack[unit:s][style:knob][acc:1 0 -10 0 10][tooltip:Pressure envelope attack duration]",0.05,0.05,0.2,0.01);
-
-
 
 //-------------------- Non-Variable Parameters -----------
 
@@ -59,7 +57,6 @@ env2Attack = 0.1;
 env2Release = 0.1;
 env1Release = 0.5;
 
-
 //==================== SIGNAL PROCESSING ================
 
 //----------------------- Nonlinear filter ----------------------------
@@ -69,7 +66,7 @@ env1Release = 0.5;
 nlfOrder = 6;
 
 //attack - sustain - release envelope for nonlinearity (declared in instrument.lib)
-envelopeMod = en.asr(nonLinAttack,100,0.1,gate);
+envelopeMod = en.asr(nonLinAttack,1,0.1,gate);
 
 //nonLinearModultor is declared in instrument.lib, it adapts allpassnn from filter.lib
 //for using it with waveguide instruments
@@ -94,14 +91,13 @@ poly = _ <: _ - _*_*_;
 //jet filter is a lowwpass filter (declared in filter.lib)
 reflexionFilter = fi.lowpass(1,2000);
 
-
 //----------------------- Algorithm implementation ----------------------------
 
 //Pressure envelope
-env1 = en.adsr(env1Attack,env1Decay,90,env1Release,(gate | pressureEnvelope))*pressure*1.1;
+env1 = en.adsr(env1Attack,env1Decay,0.9,env1Release,(gate | pressureEnvelope))*pressure*1.1;
 
 //Global envelope
-env2 = en.asr(env2Attack,100,env2Release,gate)*0.5;
+env2 = en.asr(env2Attack,1,env2Release,gate)*0.5;
 
 //Vibrato Envelope
 vibratoEnvelope = instrument.envVibrato(vibratoBegin,vibratoAttack,100,vibratoRelease,gate)*vibratoGain;
@@ -116,7 +112,7 @@ flow = env1 + breath*breathAmp + vibrato;
 
 instrReverbFlute = _,_ <: *(reverbGain),*(reverbGain),*(1 - reverbGain),*(1 - reverbGain) :
 re.zita_rev1_stereo(rdel,f1,f2,t60dc,t60m,fsmax),_,_ <: _,!,_,!,!,_,!,_ : +,+
-       with{
+    with {
        reverbGain = hslider("h:[5]Reverb/[1]Reverberation Volume (InstrReverb)[style:knob][acc:1 1 -30 0 13]", 0.2,0.05,1,0.01) : si.smooth(0.999):min(1):max(0.05);
        roomSize = hslider("h:[5]Reverb/[2]Reverberation Room Size (InstrReverb)[style:knob][acc:1 1 -30 0 13]", 0.72,0.05,1.7,0.01):min(1.7):max(0.05);
        rdel = 20;
@@ -125,4 +121,4 @@ re.zita_rev1_stereo(rdel,f1,f2,t60dc,t60m,fsmax),_,_ <: _,!,_,!,!,_,!,_ : +,+
        t60dc = roomSize*3;
        t60m = roomSize*2;
        fsmax = 48000;
-       };
+    };

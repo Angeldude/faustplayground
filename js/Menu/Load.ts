@@ -1,6 +1,6 @@
-﻿    /// <reference path="../DriveAPI.ts"/>   
-    /// <reference path="LoadView.ts"/>   
-    
+﻿    /// <reference path="../DriveAPI.ts"/>
+    /// <reference path="LoadView.ts"/>
+
 class Load {
     loadView: LoadView;
     sceneCurrent: Scene;
@@ -12,10 +12,12 @@ class Load {
         this.loadView.buttonLoadLocal.addEventListener("click", () => { this.localLoad() })
         this.loadView.buttonLoadCloud.addEventListener("click", () => { this.cloudLoad() })
         this.loadView.buttonConnectDrive.addEventListener("click", (e) => { this.drive.handleAuthClick(e) })
+
         this.loadView.aBigExemple.addEventListener("click", (e) => { this.getEx(e) })
         this.loadView.aLightExemple.addEventListener("click", (e) => { this.getEx(e) })
         this.loadView.aBigPreExemple.addEventListener("click", (e) => { this.getEx(e) })
         this.loadView.aLightPreExemple.addEventListener("click", (e) => { this.getEx(e) })
+
         this.loadView.buttonChangeAccount.addEventListener("click", (e) => { this.logOut()})
     }
 
@@ -28,13 +30,24 @@ class Load {
         }
     }
 
+    //set item from local storage 'item_key' key
+    getStorageItemValue(item_key, key)  {
+      if (localStorage.getItem(item_key)) {
+        var item_value = JSON.parse(localStorage.getItem(item_key));
+        var item_index = item_value.findIndex((obj => obj[0] === key));
+        return (item_index >= 0) ? item_value[item_index][1]: null;
+      } else {
+        return null;
+      }
+    }
+
     //load scene from local storage
     localLoad() {
         if (this.loadView.existingSceneSelect.selectedIndex > -1) {
             Utilitary.showFullPageLoading();
-            var option = <HTMLOptionElement>this.loadView.existingSceneSelect.options[this.loadView.existingSceneSelect.selectedIndex]
-            var name = option.value
-            this.sceneCurrent.recallScene(localStorage.getItem(name))
+            var option = <HTMLOptionElement>this.loadView.existingSceneSelect.options[this.loadView.existingSceneSelect.selectedIndex];
+            var name = option.value;
+            this.sceneCurrent.recallScene(this.getStorageItemValue('FaustPlayground', name));
         }
     }
 
@@ -46,7 +59,6 @@ class Load {
     }
     loadEx(json) {
         Utilitary.showFullPageLoading();
-
         this.sceneCurrent.recallScene(json);
     }
 

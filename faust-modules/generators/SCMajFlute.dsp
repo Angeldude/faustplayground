@@ -2,7 +2,7 @@ declare name "C Major Flute";
 declare author "ER";// Adapted from  "Nonlinear WaveGuide Flute" by Romain Michon (rmichon@ccrma.stanford.edu)";
 
 import("stdfaust.lib");
-instrument=library("instrument.lib");
+instrument=library("instruments.lib");
 
 /* =============== DESCRIPTION ================= :
 
@@ -54,7 +54,6 @@ freq(d)	 = freq(d-7)*2;
 
 //==================== SIGNAL PROCESSING ================
 
-
 //----------------------- Synthesis parameters computing and functions declaration ----------------------------
 
 //Loops feedbacks gains
@@ -76,10 +75,10 @@ reflexionFilter = fi.lowpass(1,2000);
 //----------------------- Algorithm implementation ----------------------------
 
 //Pressure envelope
-env1(t) = en.adsr(env1Attack,env1Decay,90,env1Release,(t | pressureEnvelope))*pressure*1.1; 
+env1(t) = en.adsr(env1Attack,env1Decay,0.9,env1Release,(t | pressureEnvelope))*pressure*1.1; 
 
 //Global envelope
-env2(t) = en.asr(env2Attack,100,env2Release,t)*0.5;
+env2(t) = en.asr(env2Attack,1,env2Release,t)*0.5;
 
 //Vibrato Envelope
 vibratoEnvelope(t) = instrument.envVibrato(vibratoBegin,vibratoAttack,100,vibratoRelease,t)*vibratoGain; 
@@ -89,7 +88,6 @@ vibrato(t) = os.osc(vibratoFreq)*vibratoEnvelope(t);
 breath(t) = no.noise*env1(t);
 
 flow(t) = env1(t) + breath(t)*breathAmp + vibrato(t);
-
 
 //------------------------- Enveloppe Trigger --------------------------------------------
 
